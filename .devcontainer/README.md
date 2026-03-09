@@ -1,38 +1,39 @@
 # Dev Container — Java Tomcat Web App
 
-This devcontainer lets you run the JSP web app **directly in your browser** via GitHub Codespaces with zero local setup.
+Run the JSP web app **entirely in your browser** via GitHub Codespaces. No local Java or Tomcat install needed.
 
 ## 🚀 How to launch
 
 1. Go to the repo on GitHub
-2. Click the green **`Code`** button → **`Codespaces`** tab → **`New codespace`**
-3. Wait ~2 minutes for the container to build and Tomcat to start
-4. Codespaces will **automatically open port 8080** in your browser
+2. Click **`Code`** → **`Codespaces`** → **`New codespace`**
+3. Wait ~2 minutes — Maven will build the WAR and start an embedded Tomcat automatically
+4. When port `8080` appears in the **Ports** panel, click **Open in Browser**
 5. Navigate to:
-   - `index.jsp` → `https://<your-codespace-url>/WebApp_SK/index.jsp`
-   - `home.jsp`  → `https://<your-codespace-url>/WebApp_SK/home.jsp`
+   - Landing page → `https://<your-codespace>/WebApp_SK/index.jsp`
+   - Home page   → `https://<your-codespace>/WebApp_SK/home.jsp`
 
-## 🛠 What's inside
+## 🛠 How it works
+
+| Step | What happens |
+|------|--------------|
+| `onCreateCommand` | `mvn clean package` — builds the WAR once |
+| `postStartCommand` | `mvn tomcat7:run` — starts embedded Tomcat on port 8080 |
+
+No `apt-get`, no `systemctl` — Tomcat runs **inside the Maven process** via the `tomcat7-maven-plugin`. This is the most reliable approach inside containers.
+
+## 🔁 Hot-reload during development
+
+The embedded Tomcat watches for changes. After editing a JSP file, just **refresh your browser** — no restart needed.
+
+For Java class changes:
+```bash
+cd WebApp_SK && mvn tomcat7:run
+```
+
+## 📦 Stack
 
 | Tool | Version |
 |------|---------|
 | Java | 17 (LTS) |
 | Maven | Latest |
-| Tomcat | 10 |
-
-## 🔌 VS Code Extensions (auto-installed)
-
-- **Language Support for Java** (Red Hat)
-- **Java Extension Pack**
-- **Maven for Java**
-- **Tomcat for Java**
-- **JSP Syntax Highlighter**
-
-## 🔁 Rebuilding / redeploying
-
-If you make changes to JSP files, redeploy with:
-
-```bash
-cd WebApp_SK
-mvn clean package && sudo cp target/*.war /var/lib/tomcat10/webapps/
-```
+| Tomcat (embedded) | 7.x via maven plugin |
