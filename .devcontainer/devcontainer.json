@@ -1,25 +1,15 @@
 {
   "name": "Java Tomcat Web App",
-
-  // Debian-based Java 17 image — stable and well-tested with Codespaces
   "image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
-
-  // Forward Tomcat port and auto-open in browser
   "forwardPorts": [8080],
   "portsAttributes": {
     "8080": {
-      "label": "Tomcat — index.jsp",
+      "label": "Tomcat - App",
       "onAutoForward": "openBrowser"
     }
   },
-
-  // Build the WAR once when the container is first created
   "onCreateCommand": "cd WebApp_SK && mvn clean package -q",
-
-  // Start embedded Tomcat via Maven plugin on every container start
-  // No systemctl, no apt installs — runs entirely inside the Maven process
-  "postStartCommand": "cd WebApp_SK && mvn tomcat7:run",
-
+  "postStartCommand": "cd WebApp_SK && mvn tomcat7:run &",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -37,6 +27,5 @@
       }
     }
   },
-
   "remoteUser": "vscode"
 }
