@@ -1,0 +1,48 @@
+{
+  "name": "Java Tomcat Web App",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": true,
+      "installGradle": false
+    }
+  },
+
+  // Forward Tomcat default port so you can open it in the browser
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Tomcat (index.jsp)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  // Install Tomcat 10 and set it up on container creation
+  "onCreateCommand": "sudo apt-get update && sudo apt-get install -y tomcat10 tomcat10-admin && sudo sed -i 's/<\/tomcat-users>/  <role rolename=\"manager-gui\"\/> <user username=\"admin\" password=\"admin\" roles=\"manager-gui\"\/><\/tomcat-users>/' /etc/tomcat10/tomcat-users.xml",
+
+  // Build the WAR and deploy it every time the container starts
+  "postStartCommand": "cd WebApp_SK && mvn clean package -q && sudo cp target/*.war /var/lib/tomcat10/webapps/ && sudo systemctl start tomcat10 && echo '✅ Tomcat started — open port 8080 to view the app'",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.java",
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-maven",
+        "adashen.vscode-tomcat",
+        "pthorsson.vscode-jsp"
+      ],
+      "settings": {
+        "java.configuration.runtimes": [
+          { "name": "JavaSE-17", "default": true }
+        ],
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+      }
+    }
+  },
+
+  "remoteUser": "vscode"
+}
